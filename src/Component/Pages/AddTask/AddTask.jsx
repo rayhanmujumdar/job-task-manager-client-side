@@ -15,7 +15,7 @@ const Task = () => {
       formState:{errors}
     } = useForm();
     const onSubmit = async (Data,e) => {
-      const fromData = {...Data,email: user?.email}
+      const fromData = {...Data,email: user?.email,completed: false}
       console.log(fromData)
         const url = 'http://localhost:5000/task'
         const {data} = await axiosPrivate.post(url,fromData)

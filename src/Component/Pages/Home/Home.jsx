@@ -7,7 +7,7 @@ const Home = () => {
     return (
         <div className='h-[92vh] flex justify-center items-center animate-pulse'>
             <PageTitle title="Home"></PageTitle>
-            <button onClick={() => navigate('/add-task')} class="btn btn-wide">Task Add</button>
+            <button onClick={() => navigate('/add-task')} className="btn btn-wide">Task Add</button>
         </div>
     );
 };
