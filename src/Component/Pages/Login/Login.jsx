@@ -1,8 +1,10 @@
+import { async } from '@firebase/util';
 import React, { useEffect } from 'react';
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../firebase/firebase.init';
+import axiosPrivate from '../../axiosPrivate/axiosPrivate';
 import Loading from '../../Shared/Loading/Loading';
 
 const Login = () => {
@@ -24,6 +26,14 @@ const Login = () => {
                 id: 'success'
             })
             navigate(from,{ replace: true })
+            const email = user?.user?.email
+            const url = `http://localhost:5000/login`
+            axiosPrivate.post(url,{email})
+            .then(res => {
+                if(res.data.token){
+                    localStorage.setItem('accessToken',res.data.token)
+                }
+            })
         }
     },[user])
     useEffect(() => {

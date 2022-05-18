@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 import useTask from '../../../Hooks/useTask';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../../firebase/firebase.init';
+import { signOut } from 'firebase/auth';
 const Task = () => {
   const {refetch} = useTask()
   const [user] = useAuthState(auth)
@@ -16,16 +17,21 @@ const Task = () => {
     } = useForm();
     const onSubmit = async (Data,e) => {
       const fromData = {...Data,email: user?.email,completed: false}
-      console.log(fromData)
         const url = 'http://localhost:5000/task'
         const {data} = await axiosPrivate.post(url,fromData)
         console.log(data)
-        if(data){
+        if(data?.insertedId){
             toast.success('Task added',{
               id: 'success'
             })
             refetch()
             e.target.reset()
+        }
+        if(data.status === 401 || data.status === 403){
+          toast.error(data.message,{
+              id: 'error'
+          })
+          signOut(auth)
         }
     };
     return (

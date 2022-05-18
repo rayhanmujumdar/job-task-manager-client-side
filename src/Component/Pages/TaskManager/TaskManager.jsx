@@ -1,5 +1,9 @@
+import userEvent from "@testing-library/user-event";
+import { signOut } from "firebase/auth";
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import toast from "react-hot-toast";
+import auth from "../../../firebase/firebase.init";
 import useTask from "../../../Hooks/useTask";
 import axiosPrivate from "../../axiosPrivate/axiosPrivate";
 import Loading from "../../Shared/Loading/Loading";
@@ -8,6 +12,7 @@ import TaskCard from "./TaskCard";
 
 const TaskManager = () => {
   const { data, isLoading, error, refetch } = useTask();
+  const [user] = useAuthState(auth);
   if (isLoading) {
     return <Loading></Loading>;
   }
@@ -16,12 +21,21 @@ const TaskManager = () => {
     const confirm = window.confirm("You want to complete it here?");
     if (confirm) {
       const url = `http://localhost:5000/task/${id}`;
-      const { data } = await axiosPrivate.put(url,{complete: confirm});
-      if(data.matchedCount > 0){
-         toast.success("Completed",{
-             id: 'completed'
-         })
-         refetch()
+      const { data, res } = await axiosPrivate.put(url, {
+        complete: confirm,
+        email: user.email,
+      });
+      if (data.matchedCount > 0) {
+        toast.success("Completed", {
+          id: "completed",
+        });
+        refetch();
+    }
+    if(data.status === 401 || data.status === 403){
+        toast.error(data.message,{
+            id: 'error'
+        })
+        signOut(auth)
       }
     }
   };
@@ -29,13 +43,22 @@ const TaskManager = () => {
     const confirm = window.confirm("Are You Sure?");
     if (confirm) {
       const url = `http://localhost:5000/task/${id}`;
-      const { data } = await axiosPrivate.delete(url);
-      console.log(data)
-      if(data?.deletedCount > 0){
-        toast.success("Delete Task",{
-            id: "delete"
+      const { data } = await axiosPrivate.delete(url,{
+          data: {
+              email: user?.email
+          }
+      });
+      if (data?.deletedCount > 0) {
+        toast.success("Delete Task", {
+          id: "delete",
+        });
+        refetch();
+      }
+      if(data.status === 401 || data.status === 403){
+        toast.error(data.message,{
+            id: 'error'
         })
-        refetch()
+        signOut(auth)
       }
     }
   };
