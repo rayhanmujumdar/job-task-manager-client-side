@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../firebase/firebase.init';
 import axiosPrivate from '../../axiosPrivate/axiosPrivate';
 import Loading from '../../Shared/Loading/Loading';
+import PageTitle from '../../Shared/PageTitle/PageTitle';
 
 const Login = () => {
     const location = useLocation()
@@ -27,7 +28,7 @@ const Login = () => {
             })
             navigate(from,{ replace: true })
             const email = user?.user?.email
-            const url = `http://localhost:5000/login`
+            const url = `https://boiling-lake-25232.herokuapp.com/login`
             axiosPrivate.post(url,{email})
             .then(res => {
                 if(res.data.token){
@@ -45,6 +46,7 @@ const Login = () => {
     },[error])
     return (
         <div className='h-[93vh] flex justify-center items-center'>
+            <PageTitle title={"Login"}></PageTitle>
             <button onClick={handleGoogleSignIn} className="btn btn-wide">
             <i className="fa-brands fa-google mr-2"></i>
             Continue With Google
