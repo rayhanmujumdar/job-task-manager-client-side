@@ -1,25 +1,37 @@
 import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { Link } from 'react-router-dom';
+import auth from '../../../firebase/firebase.init';
+import { signOut } from 'firebase/auth';
 
 const Header = () => {
+  const [user] = useAuthState(auth)
     const menuItems = (
       <>
         <li>
           <Link to="/home">Home</Link>
         </li>
         <li>
-          <Link to="/task-manager" className="whitespace-nowrap">
-            Task Manager
+          <Link to="/task-manage" className="whitespace-nowrap">
+            Task Manage
           </Link>
         </li>
         <li>
           <Link to="/about">About</Link>
         </li>
+        {!user &&  <li>
+          <Link to="/login">Login</Link>
+        </li>}
         <li className="navbar-end">
           <Link to="/add-task" className="btn whitespace-nowrap">
             Add Task
           </Link>
         </li>
+        {user && <li className="navbar-end lg:mt-0 lg:ml-3 mt-3">
+          <Link onClick={() => signOut(auth)} to="/add-task" className="btn whitespace-nowrap">
+            Sign Out
+          </Link>
+        </li>}
       </>
     );
     return (
