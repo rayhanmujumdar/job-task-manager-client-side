@@ -16,6 +16,11 @@ const TaskManager = () => {
   if (isLoading) {
     return <Loading></Loading>;
   }
+  if(error){
+    return toast.error(error?.message,{
+      id: 'error'
+    })
+  }
   const { data: tasks } = data;
   const handleComplete = async (id) => {
     const confirm = window.confirm("You want to complete it here?");
@@ -66,7 +71,7 @@ const TaskManager = () => {
     <div className="container mx-auto grid grid-cols-1 gap-y-5 py-10">
       <PageTitle title="Task-manage"></PageTitle>
       {tasks?.length ? (
-        tasks.map((task) => {
+        tasks?.map((task) => {
           return (
             <TaskCard
               key={task._id}
